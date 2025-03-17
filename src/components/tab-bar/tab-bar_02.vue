@@ -3,7 +3,7 @@
     <template v-for="(item, index) in tabbarData">
       <div 
         class="tab-bar-item" 
-        :class="{ active: currentIndex === index }"
+        :class="{ active: currentIndex === index}"
         @click="itemClick(index, item)"
       >
         <img v-if="currentIndex !== index" :src="getAssetURL(item.image)" alt="">

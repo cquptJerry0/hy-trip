@@ -2,7 +2,7 @@
   <div class="tab-bar">
     <van-tabbar v-model="currentIndex" active-color="#ff9854">
       <template v-for="(item, index) in tabbarData">
-        <van-tabbar-item :to="item.path" icon="home-o">
+        <van-tabbar-item :to="item.path" >
           <span>{{ item.text }}</span>
         </van-tabbar-item>
       </template>
