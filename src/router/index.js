@@ -30,6 +30,14 @@ const router = createRouter({
       meta: {
         hideTabBar: true
       }
+    },
+    {
+      path: "/search",
+      name: "/search",
+      component: () => import("@/views/search/search.vue"),
+      meta: {
+        hideTabBar: true
+      }
     }
   ]
 })

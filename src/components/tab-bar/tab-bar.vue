@@ -20,8 +20,10 @@
 
 import tabbarData from "@/assets/data/tabbar.js"
 import { getAssetURL } from "@/utils/load_assets.js"
-import { ref } from "vue";
+import { ref, watch } from "vue";
+import { useRoute } from "vue-router";
 
+const route = useRoute()
 const currentIndex = ref(0)
 
 </script>
