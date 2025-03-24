@@ -13,14 +13,14 @@
       <div class="start">
         <div class="date">
           <span class="tip">入住</span>
-          <span class="time">{{ startDate }}</span>
+          <span class="time">{{ startDateStr }}</span>
         </div>
         <div class="stay">共{{ stayCount }}晚</div>
       </div>
       <div class="end">
         <div class="date">
           <span class="tip">离店</span>
-          <span class="time">{{ endDate }}</span>
+          <span class="time">{{ endDateStr }}</span>
         </div>
       </div>
     </div>
@@ -64,11 +64,12 @@
 <script setup>
 import { useRouter } from "vue-router"
 import { storeToRefs } from "pinia"
-import { formatDate } from '@/utils/format_data'
+import { formatDate, getDiffDays } from '@/utils/format_data'
 import useCityStore from '@/stores/modules/city'
 import { ref, computed } from "vue"
 import useHomeStore from '@/stores/modules/home'
-import dayjs from "dayjs"
+import useMainStore from "@/stores/modules/main"
+
 const router = useRouter()
 
 //  位置/城市
@@ -92,25 +93,47 @@ const positionClick = () => {
 const cityStore = useCityStore()
 const { currentCity } = storeToRefs(cityStore)
 
-// 日期处理
-const nowDate = new Date()  
-// 入住日期
-const startDate = ref(formatDate(nowDate))
-// 离店日期
-const endDate = ref(formatDate(new Date(nowDate.getTime() + 24 * 60 * 60 * 1000)))
-const stayCount = ref(1)
-// 看日历后确定日期
+
+// 导入主状态仓库
+const mainStore = useMainStore()
+// 通过storeToRefs解构获取响应式的开始和结束日期
+// 使用storeToRefs保持响应式特性，不会丢失响应性
+const { startDate, endDate } = storeToRefs(mainStore)
+
+// 计算属性：格式化开始日期，将日期对象转为字符串格式（如：2023-05-15）
+// 当startDate变化时，此计算属性会自动更新
+const startDateStr = computed(() => {
+  return formatDate(startDate.value)
+})
+
+// 计算属性：格式化结束日期，同样转为字符串格式
+// 当endDate变化时，此计算属性会自动更新
+const endDateStr = computed(() => {
+  return formatDate(endDate.value)
+})
+
+// 计算属性：计算入住天数（入住日期到离店日期的天数差）
+// 使用getDiffDays函数计算两个日期之间的天数差
+const stayCount = computed(() => {
+  return getDiffDays(startDate.value, endDate.value)
+})
+
+// 控制日历组件的显示与隐藏的响应式变量
+// 默认为false，即不显示日历
 const showCanlder = ref(false)
 
+// 日期选择确认后的回调函数
+// date是一个数组，包含选择的开始日期[0]和结束日期[1]
 const onConfirm = (date) => {
-  // 1.设置日期
-  startDate.value = formatDate(date[0])
-  endDate.value = formatDate(date[1])
-  stayCount.value = dayjs(date[1]).diff(date[0], 'day')
-
-  // 2.隐藏日历
+  // 更新store中的开始日期
+  mainStore.startDate = date[0]
+  // 更新store中的结束日期
+  mainStore.endDate = date[1]
+  // 重新计算入住天数
+  // 注意：这里直接通过mainStore访问而不是通过之前解构出的响应式变量
+  stayCount.value = getDiffDays(mainStore.startDate, mainStore.endDate)
+  // 隐藏日历组件
   showCanlder.value = false
-
 }
 
 // 热门建议

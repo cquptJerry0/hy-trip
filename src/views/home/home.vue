@@ -6,13 +6,10 @@
     </div>
     <home-search-box />
     <home-categories />
+    
+  
     <div class="search-bar" v-if="isShowSearchBar">
-      <div class="search-bar-content">
-        <div class="search-bar-title">
-          <span>搜索</span>
-          <span>搜索</span>
-        </div>
-      </div>
+      <search-bar />
     </div>
 
     <home-content />
@@ -30,6 +27,7 @@ import HomeCategories from "./cpns/home-categories.vue";
 import HomeContent from "./cpns/home-content.vue";
 import useScroll from "@/hooks/useScroll";
 import { watch, computed } from "vue";
+import SearchBar from "@/components/search-bar/search-bar.vue";
 
 // 发送网络请求
 // 1.热门建议
@@ -63,16 +61,17 @@ watch(isReacBottom, (newValue) => {
 })
 
 // 监听搜索框的显示
+
+// 定义的可响应式的数据, 依赖另外一个可响应式的数据, 那么可以使用计算属性(computed)
 const isShowSearchBar = computed(() => {
-  return scrollTop.value > 100
+  return scrollTop.value > 685
 })
 
 </script>
 
 <style lang="less" scoped>
 .home {
- 
- 
+  position: relative;
   padding-bottom: 60px;
 }
 
@@ -82,5 +81,14 @@ const isShowSearchBar = computed(() => {
   }
 }
 
-
+.search-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 45px;
+  line-height: 45px;
+  width: 100%;
+  z-index: 999;
+}
 </style>

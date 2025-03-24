@@ -3,6 +3,8 @@
     <router-view class="page" />
     <tab-bar v-if="!isHideTabBar"/>
     <!-- <tab-bar class="tab-bar"/> -->
+
+    <loading/>
   </div>
 </template>
 
@@ -10,6 +12,8 @@
 import { computed } from "vue"
 import TabBar from "@/components/tab-bar/tab-bar.vue"
 import { useRoute } from "vue-router"
+import Loading from "@/components/loading/loading.vue"
+
 const route = useRoute()
 const isHideTabBar = computed(() => route.meta.hideTabBar)
 // const dataVRouter = computed(() => route.name)

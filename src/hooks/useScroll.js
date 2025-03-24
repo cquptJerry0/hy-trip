@@ -1,4 +1,6 @@
 import { onMounted, onUnmounted, ref } from "vue";
+import { throttle } from "underscore"
+
 
 export default function useScroll() {
  
@@ -11,18 +13,17 @@ export default function useScroll() {
     const scrollHeight = ref(0)
     const clientHeight = ref(0)
 
-    const scrollListenerHandler = () => {
+    const scrollListenerHandler = throttle(() => {
         // 获取滚动高度
         scrollTop.value = document.documentElement.scrollTop
         scrollHeight.value = document.documentElement.scrollHeight
         clientHeight.value = document.documentElement.clientHeight
-
         // 判断是否滚动到底部
         if(scrollTop.value + clientHeight.value >= scrollHeight.value) {
             isReacBottom.value = true
             console.log("达到底部");
         }
-    }
+    }, 100)
     
     onMounted(() => {
         window.addEventListener("scroll", scrollListenerHandler)
