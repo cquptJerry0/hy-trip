@@ -27,8 +27,10 @@ const homeStore = useHomeStore()
 const { houselist } = storeToRefs(homeStore)
 const router = useRouter()
 const itemClick = (item) => {
-    router.push(`/detail/${item.houseId}`)
+  // 跳转到Detail页面
+  router.push("/detail/" + item.houseId)
 }
+
 </script>
 
 <style lang="less" scoped>

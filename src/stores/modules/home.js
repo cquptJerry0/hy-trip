@@ -11,15 +11,15 @@ const useHomeStore = defineStore("home", {
     }),
 
     actions: {
-        async fetchHotSuggestions() {
+        async fetchHotSuggestData() {
             const res = await getHotSuggestions()
             this.hotSuggests = res.data
         },
-        async fetchCategories() {
+        async fetchCategoriesData() {
             const res = await getCategories()
             this.categories = res.data
         },
-        async fetchHomeHouselist() {
+        async fetchHouselistData() {
             const res = await getHomeHouseList(this.currentPage)
             this.houselist.push(...res.data)
             this.currentPage++

@@ -1,77 +1,78 @@
 <template>
-  <div class="home">
-    <home-nav-bar />
+  <div class="home" ref="homeRef">
+    <home-nav-bar/>
     <div class="banner">
       <img src="@/assets/img/home/banner.webp" alt="">
     </div>
     <home-search-box />
     <home-categories />
-    
-  
     <div class="search-bar" v-if="isShowSearchBar">
-      <search-bar />
+      <search-bar :start-date="'09.19'" :end-date="'09.20'"/>
     </div>
-
     <home-content />
-   
 
+    <!-- <button @click="moreBtnClick">加载更多</button> -->
   </div>
 </template>
 
+<script>
+  export default { name: "home" }
+</script>
 <script setup>
+import { onActivated, ref, watch } from 'vue'
+import useHomeStore from '@/stores/modules/home';
+import HomeNavBar from './cpns/home-nav-bar.vue'
+import HomeSearchBox from './cpns/home-search-box.vue'
+import HomeCategories from './cpns/home-categories.vue'
+import HomeContent from './cpns/home-content.vue'
+import SearchBar from '@/components/search-bar/search-bar.vue'
 
-import useHomeStore from "@/stores/modules/home";
-import HomeNavBar from "./cpns/home-nav-bar.vue"
-import homeSearchBox from "./cpns/home-search-box.vue";
-import HomeCategories from "./cpns/home-categories.vue";
-import HomeContent from "./cpns/home-content.vue";
-import useScroll from "@/hooks/useScroll";
-import { watch, computed } from "vue";
-import SearchBar from "@/components/search-bar/search-bar.vue";
+import useScroll from '@/hooks/useScroll'
+import { computed } from '@vue/reactivity';
 
 // 发送网络请求
-// 1.热门建议
 const homeStore = useHomeStore()
-homeStore.fetchHotSuggestions() 
-homeStore.fetchCategories()
-homeStore.fetchHomeHouselist()
+homeStore.fetchHotSuggestData()
+homeStore.fetchCategoriesData()
+homeStore.fetchHouselistData()
 
-// 监听window创建的滚动
-// 1. 当我们离开页面时候, 移除监听
-// 2. 会重复代码
-
-// const scrollListenerHandler = () => {
-//   const scrollTop = document.documentElement.scrollTop
-//   const scrollHeight = document.documentElement.scrollHeight
-//   const clientHeight = document.documentElement.clientHeight
-//   if(scrollTop + clientHeight >= scrollHeight) {
-//     homeStore.fetchHomeHouselist()
-//   }
-// }
-
-
-const { isReacBottom, scrollTop } = useScroll()
-
-watch(isReacBottom, (newValue) => {
-  if(newValue) {
-    homeStore.fetchHomeHouselist().then(() => {
-      isReacBottom.value = false
+// 监听滚动到底部
+const homeRef = ref()
+const { isReachBottom, scrollTop } = useScroll(homeRef)
+watch(isReachBottom, (newValue) => {
+  if (newValue) {
+    homeStore.fetchHouselistData().then(() => {
+      isReachBottom.value = false
     })
   }
 })
 
-// 监听搜索框的显示
-
-// 定义的可响应式的数据, 依赖另外一个可响应式的数据, 那么可以使用计算属性(computed)
+// 搜索框显示的控制
+// const isShowSearchBar = ref(false)
+// watch(scrollTop, (newTop) => {
+//   isShowSearchBar.value = newTop > 100
+// })
+// 定义的可响应式数据, 依赖另外一个可响应式的数据, 那么可以使用计算函数(computed)
 const isShowSearchBar = computed(() => {
-  return scrollTop.value > 685
+  return scrollTop.value >= 360
 })
+
+
+// 跳转回home时, 保留原来的位置
+onActivated(() => {
+  homeRef.value?.scrollTo({
+    top: scrollTop.value
+  })
+})
+
 
 </script>
 
 <style lang="less" scoped>
 .home {
-  position: relative;
+  height: 100vh;
+  overflow-y: auto;
+  box-sizing: border-box;
   padding-bottom: 60px;
 }
 
@@ -81,14 +82,5 @@ const isShowSearchBar = computed(() => {
   }
 }
 
-.search-bar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 45px;
-  line-height: 45px;
-  width: 100%;
-  z-index: 999;
-}
+
 </style>
