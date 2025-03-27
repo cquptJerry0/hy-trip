@@ -27,7 +27,7 @@ import HomeCategories from './cpns/home-categories.vue'
 import HomeContent from './cpns/home-content.vue'
 import SearchBar from '@/components/search-bar/search-bar.vue'
 
-import useScroll from '@/hooks/useScroll'
+import { useScroll } from '@/hooks/useScroll'
 import { computed } from '@vue/reactivity';
 
 // 发送网络请求
@@ -72,7 +72,7 @@ onActivated(() => {
 .home {
   height: 100vh;
   overflow-y: auto;
-  box-sizing: border-box;
+  box-sizing: border-box; //
   padding-bottom: 60px;
 }
 
